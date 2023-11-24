@@ -23,6 +23,17 @@ const getSingleUserById = async (userId: string) => {
 
 //---------------
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const updateUserInDB = async (userId: string, updatedData: any) => {
+  const result = await UserModel.findOneAndUpdate({ userId }, updatedData, {
+    new: true,
+  });
+
+  return result;
+};
+
+//---------------
+
 const deleteUserFromDB = async (userId: string) => {
   const result = await UserModel.deleteOne({ userId });
   console.log(`sssss--- ${result}`);
@@ -36,4 +47,5 @@ export const StudentServices = {
   getAllUsersFromDB,
   getSingleUserById,
   deleteUserFromDB,
+  updateUserInDB,
 };

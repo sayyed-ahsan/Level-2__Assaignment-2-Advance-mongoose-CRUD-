@@ -20,6 +20,16 @@ const userSchema = new Schema<UserInterface>({
     city: { type: String, required: true },
     country: { type: String, required: true },
   },
+  orders: {
+    type: [
+      {
+        productName: { type: String, required: true },
+        price: { type: Number, required: true },
+        quantity: { type: Number, required: true },
+      },
+    ],
+    default: undefined,
+  },
 });
 
 userSchema.pre('save', async function (next) {

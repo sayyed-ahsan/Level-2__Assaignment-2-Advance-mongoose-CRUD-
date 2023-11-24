@@ -15,4 +15,9 @@ export interface UserInterface {
     city: string;
     country: string;
   };
+  orders?: {
+    productName: string;
+    price: number;
+    quantity: number;
+  }[];
 }
