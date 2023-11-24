@@ -1,7 +1,8 @@
 import { Request, Response } from 'express';
 import { NextFunction } from 'express';
-import { StudentServices } from './user.services';
+import { userServices } from './user.services';
 import UserValidationSchema from './user.zodValidation';
+// import UserModel from './user.model';
 
 //---------------
 
@@ -10,7 +11,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
     const user = req.body;
     // Zod
     const zodParseData = UserValidationSchema.parse(user);
-    const data = await StudentServices.createUserIntoDB(zodParseData);
+    const data = await userServices.createUserIntoDB(zodParseData);
     res.status(200).json({
       success: true,
       message: 'Successfully Created',
@@ -35,7 +36,7 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
 
 const allUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = await StudentServices.getAllUsersFromDB();
+    const data = await userServices.getAllUsersFromDB();
 
     if (data.length > 0) {
       res.status(200).json({
@@ -76,7 +77,7 @@ const getSingleUsers = async (
   next: NextFunction,
 ) => {
   try {
-    const data = await StudentServices.getSingleUserById(req.params.userId);
+    const data = await userServices.getSingleUserById(req.params.userId);
 
     if (data) {
       res.status(200).json({
@@ -121,10 +122,10 @@ const updateSingleUser = async (
 
     const zodParseUpdateData = UserValidationSchema.parse(updatedData);
 
-    const existingUser = await StudentServices.getSingleUserById(userId);
+    const existingUser = await userServices.getSingleUserById(userId);
 
     if (existingUser) {
-      const updatedUser = await StudentServices.updateUserInDB(
+      const updatedUser = await userServices.updateUserInDB(
         userId,
         zodParseUpdateData,
       );
@@ -168,7 +169,7 @@ const deleteSingleUserById = async (
   next: NextFunction,
 ) => {
   try {
-    const data = await StudentServices.deleteUserFromDB(req.params.userId);
+    const data = await userServices.deleteUserFromDB(req.params.userId);
 
     if (data && data.deletedCount > 0) {
       res.status(200).json({
@@ -201,6 +202,150 @@ const deleteSingleUserById = async (
 };
 
 //---------------
+//---------------
+//---------------
+//---------------
+
+const addOrders = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.params.userId;
+    const updatedData = req.body;
+
+    // const zodParseUpdateData = UserValidationSchema.parse(updatedData);
+
+    const existingUser = await userServices.getSingleUserById(userId);
+
+    if (existingUser) {
+      const addOrder = await userServices.addOrdersDB(userId, updatedData);
+
+      const newOrders = addOrder?.orders;
+      res.status(200).json({
+        success: true,
+        message: 'Order fetched successfully!',
+        data: {
+          orders: newOrders,
+        },
+      });
+    } else {
+      // User not found, return a 404 response
+      res.status(404).json({
+        success: false,
+        message: 'User not Found !!!',
+        error: {
+          code: 404,
+          description: 'User not Found because of some problem',
+        },
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: {
+        code: 500,
+        description: 'An error occurred while processing the request',
+        error: error,
+      },
+    });
+    console.log(error);
+    next(error);
+  }
+};
+//---------------
+const getAllOrders = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.params.userId;
+
+    const existingUser = await userServices.getSingleUserById(userId);
+
+    if (existingUser) {
+      const addOrder = await userServices.getAllOrdersByID(userId);
+
+      const newOrders = addOrder?.orders;
+      res.status(200).json({
+        success: true,
+        message: 'Got all Orders successfully!',
+        data: {
+          orders: newOrders,
+        },
+      });
+    } else {
+      // User not found, return a 404 response
+      res.status(404).json({
+        success: false,
+        message: 'User not Found !!!',
+        error: {
+          code: 404,
+          description: 'User not Found because of some problem',
+        },
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: {
+        code: 500,
+        description: 'An error occurred while processing the request',
+        error: error,
+      },
+    });
+    next(error);
+  }
+};
+//---------------
+const getTotalPriceOfOrders = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const userId = req.params.userId;
+
+    const existingUser = await userServices.getSingleUserById(userId);
+
+    if (existingUser) {
+      const total = await userServices.getTotalOfOrdersByID(userId);
+
+      console.log('Total Price:', total);
+
+      console.log(total);
+
+      res.status(200).json({
+        success: true,
+        message: 'Got all Orders Total successfully!',
+        totalPrice: total,
+      });
+    } else {
+      // User not found, return a 404 response
+      res.status(404).json({
+        success: false,
+        message: 'User not Found !!!',
+        error: {
+          code: 404,
+          description: 'User not Found because of some problem',
+        },
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Internal Server Error',
+      error: {
+        code: 500,
+        description: 'An error occurred while processing the request',
+        error: error,
+      },
+    });
+    console.log(error);
+    next(error);
+  }
+};
+//---------------
 
 export const UserController = {
   createUser,
@@ -208,4 +353,7 @@ export const UserController = {
   getSingleUsers,
   deleteSingleUserById,
   updateSingleUser,
+  addOrders,
+  getAllOrders,
+  getTotalPriceOfOrders,
 };
