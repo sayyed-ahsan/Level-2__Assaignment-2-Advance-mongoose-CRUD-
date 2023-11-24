@@ -1,9 +1,10 @@
 import mongoose, { Schema } from 'mongoose';
 import { UserInterface } from './user.interface';
+import bcrypt from 'bcrypt';
+import config from '../../config';
 
-// Define the Mongoose schema
 const userSchema = new Schema<UserInterface>({
-  userId: { type: Number, required: true },
+  userId: { type: Number, required: true, unique: true },
   username: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   fullName: {
@@ -19,16 +20,23 @@ const userSchema = new Schema<UserInterface>({
     city: { type: String, required: true },
     country: { type: String, required: true },
   },
-  orders: [
-    {
-      productName: { type: String, required: true },
-      price: { type: Number, required: true },
-      quantity: { type: Number, required: true },
-    },
-  ],
 });
 
-// Create the Mongoose model
+userSchema.pre('save', async function (next) {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const user = this;
+  user.password = await bcrypt.hash(
+    user.password,
+    Number(config.bcrypt_salt_round),
+  );
+  next();
+});
+
+userSchema.post('save', function (doc, next) {
+  doc.password = undefined as unknown as string;
+  next();
+});
+
 const UserModel = mongoose.model<UserInterface>('User', userSchema);
 
 export default UserModel;

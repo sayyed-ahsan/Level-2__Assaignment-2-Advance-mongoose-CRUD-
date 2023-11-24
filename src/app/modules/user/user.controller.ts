@@ -1,17 +1,15 @@
 import { Request, Response } from 'express';
 import { NextFunction } from 'express';
 import { StudentServices } from './user.services';
+import UserValidationSchema from './user.zodValidation';
 
 //---------------
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const user = req.body.user;
-
-    // console.log(user);
-
-    const data = await StudentServices.createUserIntoDB(user);
-
+    const zodParseData = UserValidationSchema.parse(user);
+    const data = await StudentServices.createUserIntoDB(zodParseData);
     res.status(200).json({
       success: true,
       message: 'Successfully Created',
