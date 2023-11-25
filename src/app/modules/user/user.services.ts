@@ -3,6 +3,7 @@ import UserModel from './user.model';
 //---------------
 
 const createUserIntoDB = async (user: UserInterface) => {
+  // it will create a user in DB
   const result = await UserModel.create(user);
   return result;
 };
@@ -10,6 +11,7 @@ const createUserIntoDB = async (user: UserInterface) => {
 //---------------
 
 const getAllUsersFromDB = async () => {
+  // it will find all users
   const result = await UserModel.find();
   return result;
 };
@@ -17,6 +19,7 @@ const getAllUsersFromDB = async () => {
 //---------------
 
 const getSingleUserById = async (userId: string) => {
+  // searching user by Id
   const result = await UserModel.findOne({ userId });
   return result;
 };
@@ -25,6 +28,7 @@ const getSingleUserById = async (userId: string) => {
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const updateUserInDB = async (userId: string, updatedData: any) => {
+  // update user by Id
   const result = await UserModel.findOneAndUpdate({ userId }, updatedData, {
     new: true,
   });
@@ -35,8 +39,8 @@ const updateUserInDB = async (userId: string, updatedData: any) => {
 //---------------
 
 const deleteUserFromDB = async (userId: string) => {
+  // deleting user by Id
   const result = await UserModel.deleteOne({ userId });
-  console.log(`sssss--- ${result}`);
   return result;
 };
 
@@ -44,8 +48,10 @@ const deleteUserFromDB = async (userId: string) => {
 //---------------
 //---------------
 //---------------
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const addOrdersDB = async (userId: string, newOrder: any) => {
+  // orders add on array
   const result = await UserModel.findOneAndUpdate(
     { userId },
     { $push: { orders: newOrder } },
@@ -60,6 +66,7 @@ const getAllOrdersByID = async (userId: string) => {
 };
 //---------------
 const getTotalOfOrdersByID = async (userId: string) => {
+  // calculate price of all orders
   const result = await UserModel.aggregate([
     { $match: { userId: parseInt(userId) } }, // Match the user by userId
     { $unwind: '$orders' }, // Deconstruct the 'orders' array

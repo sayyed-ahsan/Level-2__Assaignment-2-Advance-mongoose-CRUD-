@@ -2,9 +2,8 @@ import { Request, Response } from 'express';
 import { NextFunction } from 'express';
 import { userServices } from './user.services';
 import UserValidationSchema from './user.zodValidation';
-// import UserModel from './user.model';
 
-//---------------
+//--------------- it will create a user
 
 const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -28,12 +27,11 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
         error: error,
       },
     });
-    console.log(error);
     next(error);
   }
 };
 
-//---------------
+//--------------- it will find all users
 
 const allUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -65,12 +63,11 @@ const allUsers = async (req: Request, res: Response, next: NextFunction) => {
         error: error,
       },
     });
-    console.log(error);
     next(error);
   }
 };
 
-//---------------
+//--------------- function for searching user by Id
 
 const getSingleUsers = async (
   req: Request,
@@ -106,11 +103,10 @@ const getSingleUsers = async (
         error: error,
       },
     });
-    console.log(error);
     next(error);
   }
 };
-//---------------
+//--------------- update user by Id
 
 const updateSingleUser = async (
   req: Request,
@@ -157,12 +153,11 @@ const updateSingleUser = async (
         error: error,
       },
     });
-    console.log(error);
     next(error);
   }
 };
 
-//---------------
+//--------------- deleting user by Id
 
 const deleteSingleUserById = async (
   req: Request,
@@ -203,8 +198,7 @@ const deleteSingleUserById = async (
 };
 
 //---------------
-//---------------
-//---------------
+// Extra 10 marks
 //---------------
 
 const addOrders = async (req: Request, res: Response, next: NextFunction) => {
@@ -212,23 +206,18 @@ const addOrders = async (req: Request, res: Response, next: NextFunction) => {
     const userId = req.params.userId;
     const updatedData = req.body;
 
-    // const zodParseUpdateData = UserValidationSchema.parse(updatedData);
-
     const existingUser = await userServices.getSingleUserById(userId);
 
     if (existingUser) {
       const addOrder = await userServices.addOrdersDB(userId, updatedData);
 
-      const newOrders = addOrder?.orders;
+      // const newOrders = addOrder?.orders;
       res.status(200).json({
         success: true,
         message: 'Order fetched successfully!',
-        data: {
-          orders: newOrders,
-        },
+        data: addOrder,
       });
     } else {
-      // User not found, return a 404 response
       res.status(404).json({
         success: false,
         message: 'User not Found !!!',
@@ -248,7 +237,6 @@ const addOrders = async (req: Request, res: Response, next: NextFunction) => {
         error: error,
       },
     });
-    console.log(error);
     next(error);
   }
 };
@@ -309,7 +297,7 @@ const getAllOrders = async (
     next(error);
   }
 };
-//---------------
+//--------------- calculate price of all orders
 const getTotalPriceOfOrders = async (
   req: Request,
   res: Response,
@@ -322,10 +310,6 @@ const getTotalPriceOfOrders = async (
 
     if (existingUser) {
       const total = await userServices.getTotalOfOrdersByID(userId);
-
-      console.log('Total Price:', total);
-
-      console.log(total);
 
       res.status(200).json({
         success: true,
@@ -353,7 +337,6 @@ const getTotalPriceOfOrders = async (
         error: error,
       },
     });
-    console.log(error);
     next(error);
   }
 };

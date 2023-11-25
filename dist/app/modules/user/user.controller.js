@@ -28,11 +28,12 @@ const createUser = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
             message: 'Successfully Created',
             data: data,
         });
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     }
     catch (error) {
         res.status(404).json({
             success: false,
-            message: 'User not Created !!!',
+            message: error.message || 'User not Created !!!',
             error: {
                 code: 404,
                 description: 'User not Created because of some problem',

@@ -60,8 +60,8 @@ const getAllOrdersByID = (userId) => __awaiter(void 0, void 0, void 0, function*
 //---------------
 const getTotalOfOrdersByID = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield user_model_1.default.aggregate([
-        { $match: { userId: parseInt(userId) } }, // Match the user by userId
-        { $unwind: '$orders' }, // Deconstruct the 'orders' array
+        { $match: { userId: parseInt(userId) } },
+        { $unwind: '$orders' },
         {
             $group: {
                 _id: null,
