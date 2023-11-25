@@ -24,7 +24,9 @@ Ensure the following tools and dependencies are installed on your machine:
 
 
 ### 2. *Install project dependencies:*
-```   npm install  ```
+```   
+npm install  
+```
    
    This command installs the necessary Node.js modules specified in the `package.json` file.
 
