@@ -17,10 +17,11 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       message: 'Successfully Created',
       data: data,
     });
-  } catch (error) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     res.status(404).json({
       success: false,
-      message: 'User not Created !!!',
+      message: error.message || 'User not Created !!!',
       error: {
         code: 404,
         description: 'User not Created because of some problem',
@@ -263,16 +264,27 @@ const getAllOrders = async (
     const existingUser = await userServices.getSingleUserById(userId);
 
     if (existingUser) {
-      const addOrder = await userServices.getAllOrdersByID(userId);
+      const allOrders = await userServices.getAllOrdersByID(userId);
 
-      const newOrders = addOrder?.orders;
-      res.status(200).json({
-        success: true,
-        message: 'Got all Orders successfully!',
-        data: {
-          orders: newOrders,
-        },
-      });
+      const ordersData = allOrders?.orders;
+      if (ordersData) {
+        res.status(200).json({
+          success: true,
+          message: 'Got all Orders successfully!',
+          data: {
+            orders: ordersData,
+          },
+        });
+      } else {
+        res.status(404).json({
+          success: false,
+          message: 'User exist but Orders not Found !!!',
+          error: {
+            code: 404,
+            description: 'Orders not Found !!!',
+          },
+        });
+      }
     } else {
       // User not found, return a 404 response
       res.status(404).json({

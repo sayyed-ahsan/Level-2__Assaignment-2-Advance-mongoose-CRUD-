@@ -2,13 +2,13 @@ import express from 'express';
 import { UserController } from './user.controller';
 
 const route = express.Router();
-
-route.post('/', UserController.createUser); //done
-route.get('/', UserController.allUsers); //done
-route.get('/:userId', UserController.getSingleUsers); //done
-route.put('/:userId', UserController.updateSingleUser); //done
-route.delete('/:userId', UserController.deleteSingleUserById); //done
-//--------------------------------
+//-------------------------------- 50 marks
+route.post('/', UserController.createUser);
+route.get('/', UserController.allUsers);
+route.get('/:userId', UserController.getSingleUsers);
+route.put('/:userId', UserController.updateSingleUser);
+route.delete('/:userId', UserController.deleteSingleUserById);
+//-------------------------------- 10 marks
 route.put('/:userId/orders', UserController.addOrders); //done
 route.get('/:userId/orders', UserController.getAllOrders); //done
 route.get('/:userId/orders/total-price', UserController.getTotalPriceOfOrders); //done
